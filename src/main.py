@@ -5,15 +5,16 @@ import math
 
 midi = MIDIFile(1)          # 1 track
 midi.addTempo(0, 0, 120)    # track, start time, BPM
-
-mappedScale = [0,2,4,7,9] #c major pentatonic
-melodyLength = 20
-notes = [0] * melodyLength
 x = symbols('x')
 
-k = 1 #taylor polynomial order
+#Adjustable values
+mappedScale = [0,2,4,7,9] #c major pentatonic
+melodyLength = 20 #length of melody
+k = 10 #taylor polynomial order
 c = 1 #center of taylor
-inputFunction = sin(x)
+inputFunction = cos(x) #Function to use
+
+notes = [0] * melodyLength
 derivativeValues = []
 taylorPolynomial = 0
 
