@@ -6,35 +6,48 @@ import math
 midi = MIDIFile(1)          # 1 track
 midi.addTempo(0, 0, 120)    # track, start time, BPM
 
-notes = [60, 62, 64, 65, 67]   # C D E F G
+mappedScale = [0,2,4,7,9] #c major pentatonic
+melodyLength = 20
+notes = [0] * melodyLength
 x = symbols('x')
 
-k = 5
-c = 2
-function = x**4
+k = 1 #taylor polynomial order
+c = 1 #center of taylor
+inputFunction = sin(x)
 derivativeValues = []
-taylor = 0
+taylorPolynomial = 0
 
 def compute_taylor():
-    current = function
-    taylor = 0
+    current = inputFunction
+    taylorPolynomial = 0
+    derivativeValues = [current]
     for i in range(k):
         derivativeValues.append((diff(current, x).subs(x, c)))
         current = diff(current, x)
-    for i in range(len(derivativeValues)):
-        taylor += (derivativeValues[i]/math.factorial(i))(x-c)**i
+    for n in range(len(derivativeValues)):
+        taylorPolynomial += (derivativeValues[n]/math.factorial(n))*(x-c)**n
+    return taylorPolynomial
 
-compute_taylor()
+taylor = compute_taylor()
 
-for i in range(len(derivativeValues)):
-    derivativeValues[i] 
-    
-for i in range(len(notes)):
-    notes[i] = random.randint(0,127)
+for i in range(melodyLength):
+    notes[i] = taylor.subs(x,i)
+
 
 for i, pitch in enumerate(notes):
+    
+    octave = pitch // len(mappedScale)
+    noteIndex = pitch % len(mappedScale)
+    
+    pitch = 60 + (octave * 12) + mappedScale[int(noteIndex)]
+    while pitch > 100:
+        pitch -= 12
+    while pitch < 40:
+        pitch += 12
+    
     midi.addNote(0, 0, pitch, i, random.randint(1,4), 100)
     # track, channel, pitch, start_beat, duration, volume
 
+    print(pitch)
 with open("output.mid", "wb") as f:
     midi.writeFile(f)
